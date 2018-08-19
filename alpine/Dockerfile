@@ -1,4 +1,4 @@
-FROM alpine:3.7
+FROM alpine:3.8
 ENV DNSPERF_VERSION 2.1.0.0-1
 
 RUN apk add --no-cache                                                        \
