@@ -53,7 +53,7 @@ spec:
         - name: DNS_SERVER_ADDR
           value: "10.20.30.40"
         name: dnsperf
-        image: guessi/dnsperf:2-alpine
+        image: guessi/dnsperf:alpine
         imagePullPolicy: Always
         volumeMounts:
         - name: dns-records-volume

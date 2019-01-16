@@ -22,7 +22,7 @@ Or run dnsperf with customized settings:
         -e MAX_TEST_SECONDS=60                \
         -e DNS_SERVER_ADDR=8.8.8.8            \
         -e MAX_QPS=1000                       \
-        -it guessi/dnsperf:2-alpine
+        -it guessi/dnsperf:alpine
 
 Or run dnsperf with customized testing data:
 
@@ -31,7 +31,7 @@ Or run dnsperf with customized testing data:
         -e MAX_TEST_SECONDS=60                \
         -e DNS_SERVER_ADDR=8.8.8.8            \
         -e MAX_QPS=1000                       \
-        -it guessi/dnsperf:2-alpine
+        -it guessi/dnsperf:alpine
 
 
 ## Benchmark inside Kubernetes system
