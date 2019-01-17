@@ -14,7 +14,7 @@
 
 To run dnsperf with default settings, use the command below:
 
-    $ docker run -it guessi/dnsperf:2-alpine
+    $ docker run -it guessi/dnsperf:alpine
 
 Or run dnsperf with customized settings:
 
