@@ -7,7 +7,7 @@
 
 ## Integrated Items
 
-* DNSPerf 2.1.0.0-1
+* DNSPerf 2.2.1
 
 
 ## Usage
@@ -65,7 +65,7 @@ pick a pod for log output monitoring
 wait for result output
 
     DNS Performance Testing Tool
-    Nominum Version 2.1.0.0
+    Version 2.2.1
 
     [Status] Command line: dnsperf -l 30 -s x.x.x.x -Q 100000 -d /opt/records.txt
     [Status] .............
