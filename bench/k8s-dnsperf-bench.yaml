@@ -20,21 +20,21 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dnsperf-deployment
-  namespace: default
   labels:
     app: dnsperf
+  name: dnsperf-deployment
+  namespace: default
 spec:
   minReadySeconds: 3
   progressDeadlineSeconds: 600
-  replicas: 10
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: dnsperf
   strategy:
     rollingUpdate:
-      maxSurge: 50%
+      maxSurge: 25%
       maxUnavailable: 0%
     type: RollingUpdate
   template:
@@ -51,17 +51,18 @@ spec:
         # please replace the ipaddr with the following command result output
         # $ kubectl get -n kube-system svc kube-dns -o go-template='{{.spec.clusterIP}}{{"\n"}}'
         - name: DNS_SERVER_ADDR
-          value: "10.20.30.40"
-        name: dnsperf
+          value: 172.20.0.10
         image: guessi/dnsperf:alpine
         imagePullPolicy: Always
+        name: dnsperf
         volumeMounts:
-        - name: dns-records-volume
-          mountPath: /opt/
+        - mountPath: /opt/
+          name: dns-records-volume
           readOnly: true
-      volumes:
-        - name: dns-records-volume
-          configMap:
-            name: dns-records-config
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: dns-records-config
+        name: dns-records-volume
