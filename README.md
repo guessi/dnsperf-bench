@@ -1,4 +1,4 @@
-# Dockerized DNS Performance Testing Tool
+# DNS Performance Testing with Kubernetes Pods
 
 [![Docker Stars](https://img.shields.io/docker/stars/guessi/dnsperf.svg)](https://hub.docker.com/r/guessi/dnsperf/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/guessi/dnsperf.svg)](https://hub.docker.com/r/guessi/dnsperf/)
@@ -9,95 +9,96 @@
 
 * DNSPerf 2.9.0
 
+## Preflight checklist
 
-## Usage
+### Does CoreDNS running expected version?
 
-To run dnsperf with default settings, use the command below:
+    $ kubectl get deployments coredns -n kube-system -o jsonpath='{$.spec.template.spec.containers[0].image}'
 
-    $ docker run -it guessi/dnsperf:alpine
+### Does CoreDNS running with expected Corefile?
 
-Or run dnsperf with customized settings:
+    $ kubectl get configmap coredns -n kube-system -o jsonpath='{$.data.Corefile}'
 
-    $ docker run                              \
-        -e MAX_TEST_SECONDS=60                \
-        -e DNS_SERVER_ADDR=8.8.8.8            \
-        -e MAX_QPS=1000                       \
-        -it guessi/dnsperf:alpine
+### Does CoreDNS running with correct resources configuration?
 
-Or run dnsperf with customized testing data:
+    $ kubectl get deployments coredns -n kube-system -o jsonpath='{$.spec.template.spec.containers[0].resources}'
 
-    $ docker run                              \
-        -v /path/to/files:/opt/records.txt:ro \
-        -e MAX_TEST_SECONDS=60                \
-        -e DNS_SERVER_ADDR=8.8.8.8            \
-        -e MAX_QPS=1000                       \
-        -it guessi/dnsperf:alpine
+## Benchmark with Kubernetes Pods
 
+### Apply pre-configured testing deployment/pods
 
-## Benchmark inside Kubernetes system
-
-apply pre-configured testing deployment/pods
-
-    $ kubectl apply -f ./bench/k8s-dnsperf-bench.yaml
+    $ kubectl apply -f https://raw.githubusercontent.com/guessi/docker-dnsperf/master/bench/k8s-dnsperf-bench.yaml
     configmap/dns-records-config created
-    deployment.apps/dnsperf-deployment created
+    deployment.apps/dnsperf created
 
-make sure the deployment is running as expected
+### If your DNS service address is not "10.100.0.10", you will need to change the value of predefined "DNS_SERVER_ADDR"
 
-    $ kubectl get deploy dnsperf-deployment
-    NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
-    dnsperf-deployment   0/2     2            0           81s
+    $ kubectl edit deployment dnsperf
 
-find out the pod name
+### Make sure the deployment is running as expected
 
-    $ kubectl get po -l app=dnsperf
-    NAME                                  READY   STATUS    RESTARTS   AGE
-    dnsperf-deployment-5c5f65fc55-59pvl   1/1     Running   0          21s
-    dnsperf-deployment-5c5f65fc55-8bfhp   1/1     Running   0          21s
+    $ kubectl get deploy dnsperf
 
-pick a pod for log output monitoring
+    NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+    dnsperf   1/1     1            1           81s
 
-    $ kubectl logs -f dnsperf-deployment-5c5f65fc55-59pvl
+    $ kubectl get pods -l app=dnsperf
 
-wait for result output
+    NAME                       READY   STATUS    RESTARTS   AGE
+    dnsperf-7b9cc5b497-d5nfs   1/1     Running   0          1m16s
+
+### To check benchmark results
+
+    $ kubectl logs -f deployments/dnsperf
 
     DNS Performance Testing Tool
     Version 2.9.0
 
-    [Status] Command line: dnsperf -l 60 -s 8.8.8.8 -Q 1000 -d /opt/records.txt
-    [Status] Sending queries (to 8.8.8.8:53)
-    [Status] Started at: Fri Mar  4 15:27:57 2022
-    [Status] Stopping after 60.000000 seconds
-    [Timeout] Query timed out: msg id 55720
-    [Timeout] Query timed out: msg id 56643
-    [Timeout] Query timed out: msg id 59821
+    [Status] Command line: dnsperf -l 30 -s 10.100.0.10 -Q 100000 -d /opt/records.txt
+    [Status] Sending queries (to 10.100.0.10:53)
+    [Status] Started at: Sat Dec 24 02:23:23 2022
+    [Status] Stopping after 30.000000 seconds
     [Status] Testing complete (time limit)
 
     Statistics:
 
-      Queries sent:         60000
-      Queries completed:    59997 (100.00%)
-      Queries lost:         3 (0.01%)
+      Queries sent:         866342
+      Queries completed:    866342 (100.00%)
+      Queries lost:         0 (0.00%)
 
-      Response codes:       NOERROR 59997 (100.00%)
-      Average packet size:  request 32, response 50
-      Run time (s):         60.003051
-      Queries per second:   999.899155
+      Response codes:       NOERROR 866342 (100.00%)
+      Average packet size:  request 43, response 160
+      Run time (s):         30.002781
+      Queries per second:   28875.389918
 
-      Average Latency (s):  0.007349 (min 0.002795, max 4154504685.515536)
-      Latency StdDev (s):   0.023197
+      Average Latency (s):  0.003435 (min 0.000419, max 0.032949)
+      Latency StdDev (s):   0.001534
 
+### Check resources utilization of the CoreDNS deployment
 
-## FAQ
+    $ kubectl top pods -n kube-system -l k8s-app=kube-dns
 
-Why is the pods shown as "CrashLoopBackOff"?
+    NAME                       CPU(cores)   MEMORY(bytes)
+    coredns-79989457d9-fn2hc   1644m        15Mi
+    coredns-79989457d9-xss5l   925m         16Mi
 
-    Pod will end its life once the `MAX_TEST_SECONDS` passed
+## Stress Test
 
-Why is the pods restart interval so long?
+### You may gain more replicas to stress your CoreDNS even harder
 
-    Please refer to the FAQ of [Pod Lifecycle](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy)
+    $ kubectl scale deployments/dnsperf --replicas 4
 
+    deployment.apps/dnsperf scaled
+
+### After gaining workload, you should find it's CPU utilization even higher
+
+    $ kubectl top pods -n kube-system -l k8s-app=kube-dns
+
+    NAME                       CPU(cores)   MEMORY(bytes)
+    coredns-79989457d9-fn2hc   1839m        17Mi
+    coredns-79989457d9-xss5l   1344m        16Mi
+
+> If you try to gain too much stress without tuning CoreDNS configureation (e.g. CPU, Memory, Replicas of CoreDNS), you should find some TIMEOUT, packet losts. That's expected... don't report it as bug! you should give CoreDNS more resources to handle that stress.
 
 ## Reference
 

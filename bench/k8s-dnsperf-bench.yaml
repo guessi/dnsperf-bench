@@ -7,14 +7,9 @@ metadata:
 data:
   records.txt: |-
     www.google.com A
-    mail.google.com A
-    chat.google.com A
-    www.yahoo.com A
-    www.microsoft.com A
-    www.netflix.com A
-    kubernetes.io A
+    www.amazon.com A
+    kubernetes.default.svc.cluster.local A
     kube-dns.kube-system.svc.cluster.local A
-    kubernetes-dashboard.kube-system.svc.cluster.local A
 
 ---
 apiVersion: apps/v1
@@ -22,12 +17,12 @@ kind: Deployment
 metadata:
   labels:
     app: dnsperf
-  name: dnsperf-deployment
+  name: dnsperf
   namespace: default
 spec:
   minReadySeconds: 3
   progressDeadlineSeconds: 600
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 3
   selector:
     matchLabels:
@@ -51,7 +46,7 @@ spec:
         # please replace the ipaddr with the following command result output
         # $ kubectl get -n kube-system svc kube-dns -o go-template='{{.spec.clusterIP}}{{"\n"}}'
         - name: DNS_SERVER_ADDR
-          value: 172.20.0.10
+          value: 10.100.0.10
         image: guessi/dnsperf:alpine
         imagePullPolicy: Always
         name: dnsperf
