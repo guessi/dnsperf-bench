@@ -39,6 +39,8 @@ spec:
     spec:
       containers:
       - env:
+        - name: MAX_CLIENTS
+          value: "1"
         - name: MAX_TEST_SECONDS
           value: "30"
         - name: MAX_QPS
