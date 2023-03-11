@@ -48,7 +48,11 @@ spec:
         # please replace the ipaddr with the following command result output
         # $ kubectl get -n kube-system svc kube-dns -o go-template='{{.spec.clusterIP}}{{"\n"}}'
         - name: DNS_SERVER_ADDR
-          value: 10.100.0.10
+          value: "10.100.0.10"
+        - name: DNS_SERVER_PORT
+          value: "53"
+        - name: TRANSPORT_MODE
+          value: "udp"
         image: guessi/dnsperf:alpine
         imagePullPolicy: Always
         name: dnsperf
