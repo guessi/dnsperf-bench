@@ -1,7 +1,7 @@
 FROM alpine:3.17
 
 ENV CONCURRENCY_KIT_VERSION 0.7.0
-ENV DNSPERF_VERSION 2.11.1
+ENV DNSPERF_VERSION 2.11.2
 
 RUN apk add --no-cache                                                        \
         bind                                                                  \
