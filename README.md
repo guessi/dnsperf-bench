@@ -58,9 +58,9 @@
     DNS Performance Testing Tool
     Version 2.13.1
 
-    [Status] Command line: dnsperf -c 1 -l 60 -s 10.100.0.10 -p 53 -m udp -Q 1000 -d /opt/records.txt
+    [Status] Command line: dnsperf -f any -m udp -s 10.100.0.10 -p 53 -d /opt/records.txt -c 1 -T 1 -l 30 -t 5 -Q 100000
     [Status] Sending queries (to 10.100.0.10:53)
-    [Status] Started at: Sat Mar 26 12:34:56 2023
+    [Status] Started at: Sat Oct 14 08:10:22 2023
     [Status] Stopping after 30.000000 seconds
     [Status] Testing complete (time limit)
 
