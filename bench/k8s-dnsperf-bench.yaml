@@ -39,20 +39,26 @@ spec:
     spec:
       containers:
       - env:
-        - name: MAX_CLIENTS
-          value: "1"
-        - name: MAX_TEST_SECONDS
-          value: "30"
-        - name: MAX_QPS
-          value: "100000"
-        # please replace the ipaddr with the following command result output
-        # $ kubectl get -n kube-system svc kube-dns -o go-template='{{.spec.clusterIP}}{{"\n"}}'
+        # please replace the DNS_SERVER_ADDR/DNS_SERVER_PORT according to the command output
+        # - kubectl get -n kube-system svc kube-dns -o go-template='{{.spec.clusterIP}}{{"\n"}}'
+        - name: ADDRESS_FAMILY
+          value: "any"
+        - name: TRANSPORT_MODE
+          value: "udp"
         - name: DNS_SERVER_ADDR
           value: "10.100.0.10"
         - name: DNS_SERVER_PORT
           value: "53"
-        - name: TRANSPORT_MODE
-          value: "udp"
+        - name: MAX_CLIENTS
+          value: "1"
+        - name: MAX_THREADS
+          value: "1"
+        - name: MAX_TEST_SECONDS
+          value: "30"
+        - name: TIMEOUT_FOR_QUERY
+          value: "5"
+        - name: MAX_QPS
+          value: "100000"
         image: guessi/dnsperf:alpine
         imagePullPolicy: Always
         name: dnsperf

@@ -1,7 +1,6 @@
 #!/bin/sh
 
 DNSPERF_BINARY="/usr/local/bin/dnsperf"
-DNSPERF_RECORDS_INPUT="/opt/records.txt"
 
 # -----------------------------------------------------------------------------
 # Command output of "dnsperf --help"
@@ -46,12 +45,16 @@ DNSPERF_RECORDS_INPUT="/opt/records.txt"
 #
 # -----------------------------------------------------------------------------
 
-MAX_TEST_SECONDS="${MAX_TEST_SECONDS:-60}"
+ADDRESS_FAMILY="${ADDRESS_FAMILY:-any}"
+TRANSPORT_MODE="${TRANSPORT_MODE:-udp}"
 DNS_SERVER_ADDR="${DNS_SERVER_ADDR:-10.100.0.10}"
 DNS_SERVER_PORT=${DNS_SERVER_PORT:-53}
-TRANSPORT_MODE="${TRANSPORT_MODE:-udp}"
-MAX_QPS="${MAX_QPS:-1000}"
+DNSPERF_RECORDS_INPUT="/opt/records.txt"
 MAX_CLIENTS="${MAX_CLIENTS:-1}"
+MAX_THREADS="${MAX_THREADS:-1}"
+MAX_TEST_SECONDS="${MAX_TEST_SECONDS:-60}"
+TIMEOUT_FOR_QUERY="${TIMEOUT_FOR_QUERY:-5}"
+MAX_QPS="${MAX_QPS:-1000}"
 
 ${DNSPERF_BINARY} -h 2>&1 | head -n 2
 
@@ -62,11 +65,14 @@ fi
 
 while true; do
   ${DNSPERF_BINARY} \
-    -c ${MAX_CLIENTS} \
-    -l ${MAX_TEST_SECONDS} \
+    -f ${ADDRESS_FAMILY} \
+    -m ${TRANSPORT_MODE} \
     -s ${DNS_SERVER_ADDR} \
     -p ${DNS_SERVER_PORT} \
-    -m ${TRANSPORT_MODE} \
-    -Q ${MAX_QPS} \
-    -d ${DNSPERF_RECORDS_INPUT}
+    -d ${DNSPERF_RECORDS_INPUT} \
+    -c ${MAX_CLIENTS} \
+    -T ${MAX_THREADS} \
+    -l ${MAX_TEST_SECONDS} \
+    -t ${TIMEOUT_FOR_QUERY} \
+    -Q ${MAX_QPS}
 done
