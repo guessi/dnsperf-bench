@@ -63,6 +63,8 @@ if [ ! -f "${DNSPERF_RECORDS_INPUT}" ]; then
   exit 1
 fi
 
+echo "[debug] bench start"
+
 while true; do
   ${DNSPERF_BINARY} \
     -f ${ADDRESS_FAMILY} \
