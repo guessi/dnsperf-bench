@@ -31,6 +31,10 @@
     configmap/dns-records-config created
     deployment.apps/dnsperf created
 
+### Find out your Kubernetes DNS service IP address
+
+    $ kubectl get service kube-dns -n kube-system -o jsonpath='{$.spec.clusterIP}'
+
 ### If your DNS service address is not "10.100.0.10", you will need to change the value of predefined "DNS_SERVER_ADDR"
 
     $ kubectl edit deployment dnsperf
