@@ -7,7 +7,7 @@
 
 ## Integrated Items
 
-* DNSPerf 2.11.2
+* DNSPerf 2.13.1
 
 ## Preflight checklist
 
@@ -52,7 +52,7 @@
     $ kubectl logs -f deployments/dnsperf
 
     DNS Performance Testing Tool
-    Version 2.11.2
+    Version 2.13.1
 
     [Status] Command line: dnsperf -c 1 -l 60 -s 10.100.0.10 -p 53 -m udp -Q 1000 -d /opt/records.txt
     [Status] Sending queries (to 10.100.0.10:53)
