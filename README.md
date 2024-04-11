@@ -7,7 +7,7 @@
 
 ## Integrated Items
 
-* DNSPerf 2.13.1
+* DNSPerf 2.14.0
 
 ## Preflight checklist
 
@@ -56,27 +56,28 @@
     $ kubectl logs -f deployments/dnsperf
 
     DNS Performance Testing Tool
-    Version 2.13.1
+    Version 2.14.0
 
     [Status] Command line: dnsperf -f any -m udp -s 10.100.0.10 -p 53 -d /opt/records.txt -c 1 -T 1 -l 30 -t 5 -Q 100000
     [Status] Sending queries (to 10.100.0.10:53)
-    [Status] Started at: Sat Oct 14 08:10:22 2023
+    [Status] Started at: Thu Apr 11 16:47:46 2024
     [Status] Stopping after 30.000000 seconds
     [Status] Testing complete (time limit)
 
     Statistics:
 
-      Queries sent:         866342
-      Queries completed:    866342 (100.00%)
+      Queries sent:         517317
+      Queries completed:    517317 (100.00%)
       Queries lost:         0 (0.00%)
 
-      Response codes:       NOERROR 866342 (100.00%)
+      Response codes:       NOERROR 517317 (100.00%)
       Average packet size:  request 43, response 160
-      Run time (s):         30.002781
-      Queries per second:   28875.389918
+      Run time (s):         30.004152
+      Queries per second:   17241.513774
 
-      Average Latency (s):  0.003435 (min 0.000419, max 0.032949)
-      Latency StdDev (s):   0.001534
+      Average Latency (s):  0.004805 (min 0.000101, max 0.029327)
+      Latency StdDev (s):   0.002537
+
 
 ### Check resources utilization of the CoreDNS deployment
 

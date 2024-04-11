@@ -7,7 +7,7 @@ DNSPERF_BINARY="/usr/local/bin/dnsperf"
 # -----------------------------------------------------------------------------
 #
 # DNS Performance Testing Tool
-# Version 2.13.1
+# Version 2.14.0
 #
 # Usage: dnsperf [-f family] [-m mode] [-s server_addr] [-p port]
 #                [-a local_addr] [-x local_port] [-d datafile] [-c clients]
