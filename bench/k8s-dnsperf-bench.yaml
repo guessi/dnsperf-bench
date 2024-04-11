@@ -20,18 +20,11 @@ metadata:
   name: dnsperf
   namespace: default
 spec:
-  minReadySeconds: 3
   progressDeadlineSeconds: 600
   replicas: 1
-  revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: dnsperf
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 0%
-    type: RollingUpdate
   template:
     metadata:
       labels:
