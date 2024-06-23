@@ -27,7 +27,7 @@
 
 ### Apply pre-configured testing deployment/pods
 
-    $ kubectl apply -f https://raw.githubusercontent.com/guessi/kubernetes-dnsperf/master/k8s-dnsperf-bench.yaml
+    $ kubectl apply -f https://raw.githubusercontent.com/guessi/dnsperf-bench/master/k8s-dnsperf-bench.yaml
     configmap/dns-records-config created
     deployment.apps/dnsperf created
 
