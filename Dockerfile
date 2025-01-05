@@ -1,4 +1,4 @@
-FROM public.ecr.aws/docker/library/alpine:3.20
+FROM public.ecr.aws/docker/library/alpine:3.21
 
 ENV CONCURRENCY_KIT_VERSION 0.7.2
 ENV DNSPERF_VERSION 2.14.0
