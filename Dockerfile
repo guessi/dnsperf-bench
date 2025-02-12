@@ -1,37 +1,20 @@
-FROM public.ecr.aws/docker/library/alpine:3.21
+# Release info:
+# - https://github.com/DNS-OARC/dnsperf/releases/tag/v2.14.0
+# - https://dev.dns-oarc.net/packages/
+# - https://launchpad.net/~dns-oarc/+archive/ubuntu/dnsperf
 
-ENV CONCURRENCY_KIT_VERSION 0.7.2
-ENV DNSPERF_VERSION 2.14.0
+FROM public.ecr.aws/lts/ubuntu:24.04_stable AS builder
 
-RUN apk add --no-cache                                                        \
-        bind                                                                  \
-        bind-dev                                                              \
-        g++                                                                   \
-        json-c-dev                                                            \
-        krb5-dev                                                              \
-        libcap-dev                                                            \
-        libxml2-dev                                                           \
-        make                                                                  \
-        nghttp2-dev                                                           \
-        openssl-dev
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ="Etc/UTC"
 
-WORKDIR /opt
-
-# http://concurrencykit.org/
-ADD https://github.com/concurrencykit/ck/archive/refs/tags/${CONCURRENCY_KIT_VERSION}.tar.gz /opt/
-RUN tar -zxf /opt/${CONCURRENCY_KIT_VERSION}.tar.gz -C /opt/ \
- && cd ck-${CONCURRENCY_KIT_VERSION} \
- && ./configure && make install clean && cd .. \
- && rm -rvf ck-${CONCURRENCY_KIT_VERSION} \
- && rm -rvf /opt/${CONCURRENCY_KIT_VERSION}.tar.gz
-
-# https://www.dns-oarc.net/tools/dnsperf
-ADD https://www.dns-oarc.net/files/dnsperf/dnsperf-${DNSPERF_VERSION}.tar.gz /opt/
-RUN tar -zxf /opt/dnsperf-${DNSPERF_VERSION}.tar.gz -C /opt/ \
- && cd /opt/dnsperf-${DNSPERF_VERSION} \
- && ./configure && make install distclean && cd .. \
- && rm -rvf /opt/dnsperf-${DNSPERF_VERSION} \
- && rm -rvf /opt/dnsperf-${DNSPERF_VERSION}.tar.gz
+RUN apt update \
+ && apt install software-properties-common --no-install-recommends -y \
+ && add-apt-repository ppa:dns-oarc/dnsperf \
+ && apt update \
+ && apt install dnsperf --no-install-recommends -y \
+ && apt clean
 
 ADD entrypoint.sh /
+
 ENTRYPOINT ["/entrypoint.sh"]
