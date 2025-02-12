@@ -9,102 +9,74 @@
 
 * DNSPerf 2.14.0
 
-## Preflight checklist
+## 🔥 Stress Test 🔥 Benchmark with Kubernetes Pods
 
-### Does CoreDNS running expected version?
+Apply pre-configured testing deployment/pods
 
-    $ kubectl get deployments coredns -n kube-system -o jsonpath='{$.spec.template.spec.containers[0].image}'
+```bash
+kubectl apply -f https://raw.githubusercontent.com/guessi/dnsperf-bench/main/k8s-dnsperf-bench.yaml
+```
 
-### Does CoreDNS running with expected Corefile?
-
-    $ kubectl get configmap coredns -n kube-system -o jsonpath='{$.data.Corefile}'
-
-### Does CoreDNS running with correct resources configuration?
-
-    $ kubectl get deployments coredns -n kube-system -o jsonpath='{$.spec.template.spec.containers[0].resources}'
-
-## Benchmark with Kubernetes Pods
-
-### Apply pre-configured testing deployment/pods
-
-    $ kubectl apply -f https://raw.githubusercontent.com/guessi/dnsperf-bench/master/k8s-dnsperf-bench.yaml
-    configmap/dns-records-config created
-    deployment.apps/dnsperf created
-
-### Find out your Kubernetes DNS service IP address
-
-    $ kubectl get service kube-dns -n kube-system -o jsonpath='{$.spec.clusterIP}'
-
-### If your DNS service address is not "10.100.0.10", you will need to change the value of predefined "DNS_SERVER_ADDR"
-
-    $ kubectl edit deployment dnsperf
-
-### Make sure the deployment is running as expected
-
-    $ kubectl get deploy dnsperf
-
-    NAME      READY   UP-TO-DATE   AVAILABLE   AGE
-    dnsperf   1/1     1            1           81s
-
-    $ kubectl get pods -l app=dnsperf
-
-    NAME                       READY   STATUS    RESTARTS   AGE
-    dnsperf-7b9cc5b497-d5nfs   1/1     Running   0          1m16s
-
-### To check benchmark results
-
-    $ kubectl logs -f deployments/dnsperf
-
-    DNS Performance Testing Tool
-    Version 2.14.0
-
-    [Status] Command line: dnsperf -f any -m udp -s 10.100.0.10 -p 53 -d /opt/records.txt -c 1 -T 1 -l 30 -t 5 -Q 100000
-    [Status] Sending queries (to 10.100.0.10:53)
-    [Status] Started at: Thu Apr 11 16:47:46 2024
-    [Status] Stopping after 30.000000 seconds
-    [Status] Testing complete (time limit)
-
-    Statistics:
-
-      Queries sent:         517317
-      Queries completed:    517317 (100.00%)
-      Queries lost:         0 (0.00%)
-
-      Response codes:       NOERROR 517317 (100.00%)
-      Average packet size:  request 43, response 160
-      Run time (s):         30.004152
-      Queries per second:   17241.513774
-
-      Average Latency (s):  0.004805 (min 0.000101, max 0.029327)
-      Latency StdDev (s):   0.002537
+Make sure the deployment is running as expected
 
 
-### Check resources utilization of the CoreDNS deployment
+```bash
+kubectl get pods -l app=dnsperf
+NAME                       READY   STATUS    RESTARTS   AGE
+dnsperf-7b9cc5b497-d5nfs   1/1     Running   0          1m16s
+```
 
-    $ kubectl top pods -n kube-system -l k8s-app=kube-dns
+Check benchmark results
 
-    NAME                       CPU(cores)   MEMORY(bytes)
-    coredns-79989457d9-fn2hc   1644m        15Mi
-    coredns-79989457d9-xss5l   925m         16Mi
+```bash
+kubectl logs -f deployments/dnsperf
+...
+Statistics:
+  ...
+  Queries per second:   17241.513774
+  ...
+```
 
-## Stress Test
+Even more stress 🔥🔥🔥
 
-### You may gain more replicas to stress your CoreDNS even harder
+```bash
+kubectl scale deployments/dnsperf --replicas 10
+```
 
-    $ kubectl scale deployments/dnsperf --replicas 4
+## 🤔 Evaluate why there would have performance issue
 
-    deployment.apps/dnsperf scaled
+Does CoreDNS running expected version?
 
-### After gaining workload, you should find it's CPU utilization even higher
+```bash
+kubectl describe deployments coredns -n kube-system | grep 'Image:'
+```
 
-    $ kubectl top pods -n kube-system -l k8s-app=kube-dns
+Does CoreDNS running with expected Corefile?
 
-    NAME                       CPU(cores)   MEMORY(bytes)
-    coredns-79989457d9-fn2hc   1839m        17Mi
-    coredns-79989457d9-xss5l   1344m        16Mi
+```bash
+kubectl describe configmap coredns -n kube-system
+```
 
-> If you try to gain too much stress without tuning CoreDNS configureation (e.g. CPU, Memory, Replicas of CoreDNS), you should find some TIMEOUT, packet losts. That's expected... don't report it as bug! you should give CoreDNS more resources to handle that stress.
+Does CoreDNS running with correct resources configuration?
 
-## Reference
+```bash
+kubectl get deployments coredns -n kube-system -o json | jq -r '.spec.template.spec.containers[0].resources'
+```
+
+Does CoreDNS need more CPU/Memory resources?
+
+```bash
+kubectl top pods -n kube-system -l k8s-app=kube-dns
+```
+
+How many CoreDNS Pods running? Have you enabled CoreDNS AutoScaler?
+
+```bash
+kubectl get deployments coredns -n kube-system
+```
+
+> DO NOT report bug without trying to do performance tuning. If you try to gain too much stress without tuning CoreDNS configureation, it is expected to have some TIMEOUT or packet losts. It's expected if you don't change.
+
+## 📑 Reference
 
 - https://www.dnsperf.com/
