@@ -43,6 +43,13 @@ spec:
           value: "/opt/records.txt"
         - name: EXTRA_ARGS
           value: "-c 1 -T 1 -l 30 -t 5 -Q 100000"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
         volumeMounts:
         - mountPath: /opt/
           name: dns-records-volume
