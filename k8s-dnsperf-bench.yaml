@@ -29,6 +29,15 @@ spec:
       labels:
         app: dnsperf
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                - linux
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000
