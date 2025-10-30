@@ -1,0 +1,28 @@
+# Build artifacts
+*.log
+*.tmp
+
+# IDE and editors
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Trashes
+Thumbs.db
+
+# Security and secrets
+config.yaml
+secrets/
+
+# Temporary files
+*.bak
+*.backup
+*.orig
+
+# .gitignore
+.gitignore
