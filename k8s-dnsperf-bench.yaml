@@ -37,7 +37,7 @@ spec:
       containers:
       - name: dnsperf
         image: guessi/dnsperf
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         env:
         - name: DNSPERF_RECORDS_INPUT
           value: "/opt/records.txt"
