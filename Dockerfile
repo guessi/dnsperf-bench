@@ -3,7 +3,7 @@
 # - https://dev.dns-oarc.net/packages/
 # - https://launchpad.net/~dns-oarc/+archive/ubuntu/dnsperf
 
-FROM public.ecr.aws/lts/ubuntu:24.04_stable AS builder
+FROM public.ecr.aws/lts/ubuntu:24.04_stable
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ="Etc/UTC"
@@ -13,8 +13,14 @@ RUN apt update \
  && add-apt-repository ppa:dns-oarc/dnsperf \
  && apt update \
  && apt install dnsperf --no-install-recommends -y \
- && apt clean
+ && apt clean \
+ && rm -rf /var/lib/apt/lists/* \
+ && groupadd -r dnsperf \
+ && useradd -r -g dnsperf dnsperf
 
-ADD entrypoint.sh /
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+USER dnsperf
 
 ENTRYPOINT ["/entrypoint.sh"]

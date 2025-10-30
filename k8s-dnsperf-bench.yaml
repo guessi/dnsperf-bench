@@ -29,6 +29,11 @@ spec:
       labels:
         app: dnsperf
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
       - name: dnsperf
         image: guessi/dnsperf
@@ -42,6 +47,12 @@ spec:
         - mountPath: /opt/
           name: dns-records-volume
           readOnly: true
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          capabilities:
+            drop:
+            - ALL
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       volumes:
