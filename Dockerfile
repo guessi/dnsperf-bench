@@ -14,11 +14,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ="Etc/UTC"
 
 RUN apt update \
- && apt install software-properties-common --no-install-recommends -y \
- && add-apt-repository ppa:dns-oarc/dnsperf \
+ && apt install -y --no-install-recommends ca-certificates gpg curl \
+ && curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x19D66B634E150C08984C4961474DB6112D0C6432" | gpg --dearmor -o /usr/share/keyrings/dns-oarc.gpg \
+ && echo "deb [signed-by=/usr/share/keyrings/dns-oarc.gpg] https://ppa.launchpadcontent.net/dns-oarc/dnsperf/ubuntu noble main" > /etc/apt/sources.list.d/dnsperf.list \
  && apt update \
- && apt install dnsperf --no-install-recommends -y \
- && apt clean \
+ && apt install -y --no-install-recommends dnsperf \
+ && apt purge -y --auto-remove ca-certificates gpg curl \
  && rm -rf /var/lib/apt/lists/* \
  && groupadd -r dnsperf \
  && useradd -r -g dnsperf dnsperf
