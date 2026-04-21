@@ -7,6 +7,7 @@ on:
 
 jobs:
   docker:
+    if: github.repository == 'guessi/dnsperf-bench'
     runs-on: ubuntu-latest
     steps:
       -
