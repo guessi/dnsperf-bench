@@ -1,7 +1,7 @@
 # Release info:
 # - https://dev.dns-oarc.net/packages/
 # - https://launchpad.net/~dns-oarc/+archive/ubuntu/dnsperf
-# - https://codeberg.org/DNS-OARC/dnsperf/releases/tag/v2.15.0
+# - https://codeberg.org/DNS-OARC/dnsperf/releases
 
 # Note:
 # dnsperf on GitHub have been marked as archived, related commits:

@@ -7,7 +7,7 @@
 
 ## Integrated Items
 
-* DNSPerf 2.15.0
+* DNSPerf 2.15.1
 
 ## 🔥 Stress Test 🔥 Benchmark with Kubernetes Pods
 
