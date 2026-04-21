@@ -12,6 +12,35 @@ data:
     kube-dns.kube-system.svc.cluster.local A
 
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dnsperf
+  namespace: default
+automountServiceAccountToken: false
+
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: dnsperf-netpol
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: dnsperf
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress: []
+  egress:
+    - ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,6 +57,8 @@ spec:
     metadata:
       labels:
         app: dnsperf
+        app.kubernetes.io/name: dnsperf
+        app.kubernetes.io/version: "2.15.1-1"
     spec:
       affinity:
         nodeAffinity:
@@ -38,39 +69,45 @@ spec:
                 operator: In
                 values:
                 - linux
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+      automountServiceAccountToken: false
       containers:
-      - name: dnsperf
-        image: guessi/dnsperf
-        imagePullPolicy: IfNotPresent
-        env:
+      - env:
         - name: DNSPERF_RECORDS_INPUT
           value: "/opt/records.txt"
         - name: EXTRA_ARGS
           value: "-c 1 -T 1 -l 30 -t 5 -Q 100000"
+        image: guessi/dnsperf:2.15.1-1
+        imagePullPolicy: IfNotPresent
+        name: dnsperf
         resources:
-          requests:
-            cpu: 100m
-            memory: 128Mi
           limits:
             cpu: 200m
             memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
         volumeMounts:
         - mountPath: /opt/
           name: dns-records-volume
           readOnly: true
-        securityContext:
-          allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: false
-          capabilities:
-            drop:
-            - ALL
       dnsPolicy: ClusterFirst
+      enableServiceLinks: false
       restartPolicy: Always
+      securityContext:
+        fsGroup: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      serviceAccountName: dnsperf
+      terminationGracePeriodSeconds: 5
       volumes:
       - configMap:
           defaultMode: 420
