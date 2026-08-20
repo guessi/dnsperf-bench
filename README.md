@@ -11,12 +11,12 @@
 
 ## Versioning
 
-Tags follow the format `v<upstream_version>-<revision>`, e.g. `v2.15.1-1`.
+Tags follow the format `v<upstream_version>-<revision>`, e.g. `v2.16.0-1`.
 
 - `<upstream_version>` — the bundled DNSPerf release version.
 - `<revision>` — incremented for packaging or Dockerfile changes that don't change the upstream version.
 
-Pushing a tag matching `v*` triggers the CI workflow to build and push Docker images to Docker Hub. The `semver` metadata action extracts the version from the tag and applies it as the image tag (e.g. `guessi/dnsperf:2.15.1-1`). The `latest` tag is updated on every push to the default branch.
+Pushing a tag matching `v*` triggers the CI workflow to build and push Docker images to Docker Hub. The `semver` metadata action extracts the version from the tag and applies it as the image tag (e.g. `guessi/dnsperf:2.16.0-1`). The `latest` tag is updated on every push to the default branch.
 
 > **Note:** The DNSPerf package is installed from the [dns-oarc PPA](https://launchpad.net/~dns-oarc/+archive/ubuntu/dnsperf), which only publishes the latest available version. There is no way to pin or install an older release via the PPA. If you need a specific version, you would have to build from source.
 

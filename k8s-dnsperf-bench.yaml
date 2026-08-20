@@ -58,7 +58,7 @@ spec:
       labels:
         app: dnsperf
         app.kubernetes.io/name: dnsperf
-        app.kubernetes.io/version: "2.15.1-1"
+        app.kubernetes.io/version: "2.16.0-1"
     spec:
       affinity:
         nodeAffinity:
@@ -76,7 +76,7 @@ spec:
           value: "/opt/records.txt"
         - name: EXTRA_ARGS
           value: "-c 1 -T 1 -l 30 -t 5 -Q 100000"
-        image: guessi/dnsperf:2.15.1-1
+        image: guessi/dnsperf:2.16.0-1
         imagePullPolicy: IfNotPresent
         name: dnsperf
         resources:
