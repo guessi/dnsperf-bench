@@ -7,7 +7,7 @@
 
 ## Integrated Items
 
-* DNSPerf 2.15.1
+* DNSPerf 2.16.0
 
 ## Versioning
 
