@@ -58,7 +58,7 @@ spec:
       labels:
         app: dnsperf
         app.kubernetes.io/name: dnsperf
-        app.kubernetes.io/version: "2.16.0-1"
+        app.kubernetes.io/version: "2.16.0-2"
     spec:
       affinity:
         nodeAffinity:
